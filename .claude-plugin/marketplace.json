@@ -1,0 +1,15 @@
+{
+  "name": "local",
+  "description": "Personal local plugins",
+  "owner": {
+    "name": "aanar"
+  },
+  "plugins": [
+    {
+      "name": "worktrees",
+      "description": "Git worktree lifecycle — creation hooks, teardown, and merging back into the parent branch",
+      "version": "2.0.0",
+      "source": "./plugins/worktrees"
+    }
+  ]
+}
