@@ -1,6 +1,6 @@
 ---
 name: install
-description: Add WorktreeCreate/WorktreeRemove hooks to the current project's .claude/settings.local.json so that git-ignored files (.mcp.json, .env, .claude/settings.local.json) are symlinked into worktrees automatically.
+description: Add WorktreeCreate/WorktreeRemove hooks to the current project's .claude/settings.json so that git-ignored files (.mcp.json, .env, .claude/settings.local.json) are symlinked into worktrees automatically.
 user_invocable: true
 ---
 
@@ -9,13 +9,13 @@ user_invocable: true
 Add worktree hooks to the current project. This skill:
 
 1. Writes the worktree lifecycle scripts into the project's `.claude/scripts/` directory
-2. Reads `.claude/settings.local.json` in the current project (creates it if missing)
+2. Reads `.claude/settings.json` in the current project (creates it if missing)
 3. Adds `WorktreeCreate` and `WorktreeRemove` hook entries pointing to those scripts
 4. Does NOT overwrite existing hooks — merges the worktree hooks alongside any existing hook config
 
 ## Scripts to install
 
-Write these two files into the project. Replace `<PROJECT_DIR>` below with the **absolute path** to the project root (the value of `$CLAUDE_PROJECT_DIR`).
+Write these two files into the project.
 
 ### `.claude/scripts/worktree-create.sh`
 
@@ -77,7 +77,7 @@ fi
 
 ## Hook configuration to add
 
-Add the following under the `"hooks"` key in `.claude/settings.local.json`, merging with any existing hooks. Replace `<PROJECT_DIR>` with the absolute path to the project root:
+Add the following under the `"hooks"` key in `.claude/settings.json`, merging with any existing hooks. Use **relative paths** — hooks run from the project root:
 
 ```json
 {
@@ -87,7 +87,7 @@ Add the following under the `"hooks"` key in `.claude/settings.local.json`, merg
         "hooks": [
           {
             "type": "command",
-            "command": "<PROJECT_DIR>/.claude/scripts/worktree-create.sh",
+            "command": ".claude/scripts/worktree-create.sh",
             "timeout": 600
           }
         ]
@@ -98,7 +98,7 @@ Add the following under the `"hooks"` key in `.claude/settings.local.json`, merg
         "hooks": [
           {
             "type": "command",
-            "command": "<PROJECT_DIR>/.claude/scripts/worktree-remove.sh"
+            "command": ".claude/scripts/worktree-remove.sh"
           }
         ]
       }
@@ -112,8 +112,8 @@ Add the following under the `"hooks"` key in `.claude/settings.local.json`, merg
 1. Create the directory `.claude/scripts/` in the project if it doesn't exist.
 2. Write both scripts above to `.claude/scripts/worktree-create.sh` and `.claude/scripts/worktree-remove.sh`.
 3. Make both scripts executable (`chmod +x`).
-4. Read the project's `.claude/settings.local.json` (use `$CLAUDE_PROJECT_DIR/.claude/settings.local.json`). If it doesn't exist, start with `{}`.
+4. Read the project's `.claude/settings.json` (use `$CLAUDE_PROJECT_DIR/.claude/settings.json`). If it doesn't exist, start with `{}`.
 5. If `WorktreeCreate` hooks already exist, tell the user and skip — don't duplicate.
-6. Otherwise, add both `WorktreeCreate` and `WorktreeRemove` hooks to the file. Use the **absolute path** to the project root in the hook commands (resolve `$CLAUDE_PROJECT_DIR` to its actual value).
+6. Otherwise, add both `WorktreeCreate` and `WorktreeRemove` hooks to the file. Use relative paths as shown above.
 7. Write the updated file, preserving all existing content.
 8. Tell the user to restart Claude Code for the hooks to take effect.

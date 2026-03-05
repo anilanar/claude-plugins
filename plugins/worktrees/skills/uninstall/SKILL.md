@@ -1,6 +1,6 @@
 ---
 name: uninstall
-description: Remove WorktreeCreate/WorktreeRemove hooks from the current project's .claude/settings.local.json.
+description: Remove WorktreeCreate/WorktreeRemove hooks from the current project's .claude/settings.json.
 user_invocable: true
 ---
 
@@ -10,7 +10,7 @@ Remove worktree hooks and scripts from the current project.
 
 ## Instructions
 
-1. Read the project's `.claude/settings.local.json` (use `$CLAUDE_PROJECT_DIR/.claude/settings.local.json`). If it doesn't exist, tell the user there's nothing to remove.
+1. Read the project's `.claude/settings.json` (use `$CLAUDE_PROJECT_DIR/.claude/settings.json`). If it doesn't exist, tell the user there's nothing to remove.
 2. If `WorktreeCreate` or `WorktreeRemove` keys exist under `"hooks"`, remove them.
 3. If the `"hooks"` object is now empty after removal, remove the `"hooks"` key entirely.
 4. Write the updated file, preserving all other content.

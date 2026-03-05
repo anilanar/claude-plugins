@@ -8,7 +8,7 @@
     {
       "name": "worktrees",
       "description": "Git worktree lifecycle — creation hooks, teardown, and merging back into the parent branch",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "source": "./plugins/worktrees"
     }
   ]
