@@ -10,6 +10,12 @@
       "description": "Git worktree lifecycle — creation hooks, teardown, and merging back into the parent branch",
       "version": "2.1.0",
       "source": "./plugins/worktrees"
+    },
+    {
+      "name": "cmux",
+      "description": "cmux integration — notifications, workspace setup on worktree creation, neovim split",
+      "version": "0.1.0",
+      "source": "./plugins/cmux"
     }
   ]
 }
