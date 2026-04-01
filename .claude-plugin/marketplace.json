@@ -16,6 +16,12 @@
       "description": "cmux integration — notifications, workspace setup on worktree creation, neovim split",
       "version": "0.1.0",
       "source": "./plugins/cmux"
+    },
+    {
+      "name": "tdd",
+      "description": "TDD workflow with isolated subagents, architect-level escalation, and persistent agent memory",
+      "version": "1.0.0",
+      "source": "./plugins/tdd"
     }
   ]
 }

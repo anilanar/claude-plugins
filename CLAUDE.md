@@ -22,6 +22,7 @@ Each plugin has `.claude-plugin/plugin.json` (metadata) and optionally `hooks/` 
 
 - **worktrees** (`plugins/worktrees/`) — Skills-only plugin (no hooks.json). The `install` skill writes worktree lifecycle hooks and scripts into the *target project's* `.claude/` directory. The `uninstall` skill reverses this. The `merge` skill handles merging worktree branches into parent branches with rebase and fast-forward-only merge. Supports stacked branches via `git config branch.<name>.worktree-parent`.
 - **cmux** (`plugins/cmux/`) — Hooks-only plugin (no skills). Integrates with the cmux desktop environment: sends notifications on session events (`SessionStart`, `Stop`, `Notification`) and sets up cmux workspaces when entering worktrees (`PostToolUse` on `EnterWorktree`).
+- **tdd** (`plugins/tdd/`) — TDD workflow plugin with skills and agents. Runs a strict Red-Green-Refactor cycle where each phase is an isolated subagent. Agents escalate architectural decisions to the user.
 
 ## No Build/Test System
 
