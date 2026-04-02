@@ -13,8 +13,8 @@
     },
     {
       "name": "cmux",
-      "description": "cmux integration — session lifecycle notifications",
-      "version": "0.2.0",
+      "description": "cmux skills — topology control, browser automation, and markdown viewer",
+      "version": "0.3.0",
       "source": "./plugins/cmux"
     },
     {
