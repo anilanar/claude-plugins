@@ -14,7 +14,7 @@
     {
       "name": "cmux",
       "description": "cmux skills — topology control, browser automation, and markdown viewer",
-      "version": "0.5.0",
+      "version": "0.6.0",
       "source": "./plugins/cmux"
     },
     {

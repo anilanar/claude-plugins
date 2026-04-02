@@ -1,9 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
-# Receives PostToolUse JSON on stdin. Reads the new cwd and reports
-# it (plus the git branch) to cmux over its Unix socket so the sidebar
-# stays in sync when Claude Code enters/exits worktrees.
+# Receives hook JSON on stdin. Reads the cwd and reports it (plus the
+# git branch) to cmux over its Unix socket so the sidebar stays in sync
+# when Claude Code enters/exits worktrees or starts in one.
 
 [[ -S "${CMUX_SOCKET_PATH:-}" ]] || exit 0
 [[ -n "${CMUX_TAB_ID:-}" ]]     || exit 0
