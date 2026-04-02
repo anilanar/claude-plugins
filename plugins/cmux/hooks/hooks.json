@@ -1,5 +1,5 @@
 {
-  "description": "cmux native Claude Code integration and worktree workspace setup",
+  "description": "cmux native Claude Code integration",
   "hooks": {
     "SessionStart": [
       {
@@ -27,17 +27,6 @@
           {
             "type": "command",
             "command": "/Applications/cmux.app/Contents/Resources/bin/cmux claude-hook notification"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "EnterWorktree",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/setup-workspace.sh"
           }
         ]
       }

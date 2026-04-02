@@ -1,5 +1,5 @@
 {
   "name": "cmux",
-  "version": "0.1.0",
-  "description": "cmux integration — notifications when Claude needs attention"
+  "version": "0.2.0",
+  "description": "cmux integration — session lifecycle notifications"
 }

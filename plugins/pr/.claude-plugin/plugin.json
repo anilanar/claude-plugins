@@ -1,0 +1,5 @@
+{
+  "name": "pr",
+  "version": "0.2.0",
+  "description": "PR workflow utilities — CI check watching, and more"
+}

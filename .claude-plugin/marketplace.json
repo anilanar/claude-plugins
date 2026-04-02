@@ -8,20 +8,26 @@
     {
       "name": "worktrees",
       "description": "Git worktree lifecycle — creation hooks, teardown, and merging back into the parent branch",
-      "version": "2.1.0",
+      "version": "2.2.0",
       "source": "./plugins/worktrees"
     },
     {
       "name": "cmux",
-      "description": "cmux integration — notifications, workspace setup on worktree creation, neovim split",
-      "version": "0.1.0",
+      "description": "cmux integration — session lifecycle notifications",
+      "version": "0.2.0",
       "source": "./plugins/cmux"
     },
     {
       "name": "tdd",
       "description": "TDD workflow with isolated subagents, architect-level escalation, and persistent agent memory",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "source": "./plugins/tdd"
+    },
+    {
+      "name": "pr",
+      "description": "PR workflow utilities — CI check watching, and more",
+      "version": "0.2.0",
+      "source": "./plugins/pr"
     }
   ]
 }
