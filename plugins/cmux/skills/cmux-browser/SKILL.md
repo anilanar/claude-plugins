@@ -1,11 +1,17 @@
 ---
 name: cmux-browser
-description: End-user browser automation with cmux. Use when you need to open sites, interact with pages, wait for state changes, and extract data from cmux browser surfaces.
+description: >-
+  You have a real web browser. Use this skill whenever you need to visit a URL,
+  read a webpage, interact with a web UI, fill out forms, click buttons, scrape
+  page content, test a web app, or perform any browser-based task. This is your
+  browser — use it any time a task involves the web.
 ---
 
 # Browser Automation with cmux
 
-Use this skill for browser tasks inside cmux webviews.
+You can control a real web browser via `cmux browser` commands. Use this skill
+whenever you need to open a website, read page content, fill forms, click
+elements, wait for page state, or extract data from any web page.
 
 ## Core Workflow
 
