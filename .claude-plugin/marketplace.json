@@ -6,12 +6,6 @@
   },
   "plugins": [
     {
-      "name": "worktrees",
-      "description": "Git worktree lifecycle — creation hooks, teardown, and merging back into the parent branch",
-      "version": "2.2.0",
-      "source": "./plugins/worktrees"
-    },
-    {
       "name": "cmux",
       "description": "cmux skills — topology control, browser automation, and markdown viewer",
       "version": "0.7.0",

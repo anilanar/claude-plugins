@@ -1,5 +1,0 @@
-{
-  "name": "worktrees",
-  "version": "2.2.0",
-  "description": "Git worktree lifecycle — creation hooks (symlinks git-ignored config files), teardown, and merging back into the parent branch"
-}
