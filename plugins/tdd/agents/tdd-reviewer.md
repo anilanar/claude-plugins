@@ -38,6 +38,11 @@ Run the tests. Do NOT trust reported results from other agents.
 - Are there obvious **edge cases** the tests miss? (nulls, empty inputs, boundary values, error paths, concurrent access)
 - Could the tests **pass with a broken implementation**? (overly loose assertions, tautological tests)
 
+#### Completeness
+- If the feature supports **multiple variants** (modes, frameworks, backends, paths), are ALL of them tested?
+- If the feature **combines or accumulates** results across iterations, is the combination tested — not just individual items?
+- If the implementation has **observable side effects** (logging, warnings, metrics, callbacks), are those verified?
+
 #### Test quality
 - Are tests **isolated** from each other? (no shared mutable state, proper setup/teardown)
 - Do test names describe **behavior**, not implementation?

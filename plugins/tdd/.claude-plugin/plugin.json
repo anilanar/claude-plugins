@@ -1,7 +1,7 @@
 {
   "name": "tdd",
   "description": "Enforce Test-Driven Development with isolated subagents, architect-level escalation, and persistent agent memory. Runs a strict Red-Green-Refactor cycle where each phase has its own context window, preventing implementation knowledge from leaking into test design.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": {
     "name": "Anil Anar",
     "email": "anilanar@hotmail.com"

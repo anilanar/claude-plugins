@@ -63,7 +63,8 @@ Prompt: Write a failing test for: <requirement>
 
 **Gate:** Check the agent's status:
 - `RED_CONFIRMED` → proceed to Step 2
-- `NEEDS_CONTEXT` → present the agent's findings to the user, wait for response, then re-run with context
+- `NEEDS_CONTEXT` with a `BEHAVIORS` list → this is a **behavior enumeration checkpoint**. Present the behavior list to the user and ask: "Are these the right behaviors? Anything missing?" Once confirmed (or amended), re-run the test-writer with the approved behavior list as context.
+- `NEEDS_CONTEXT` (other) → present the agent's findings to the user, wait for response, then re-run with context
 - `BLOCKED` → present the blocker to the user, wait for resolution
 
 Capture from the output: `TEST_FILE`, `TEST_COMMAND`, `FAILURE_OUTPUT`

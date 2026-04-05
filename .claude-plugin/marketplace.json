@@ -20,7 +20,7 @@
     {
       "name": "tdd",
       "description": "TDD workflow with isolated subagents, architect-level escalation, and persistent agent memory",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "source": "./plugins/tdd"
     },
     {

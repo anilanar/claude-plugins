@@ -42,18 +42,43 @@ Determine which kind of test fits the requirement. Projects often have different
 
 Look at how the project organizes these (separate directories? naming conventions? different runners?) and follow that structure. If the requirement doesn't clearly map to one type, escalate — the user should decide.
 
-### 3. Write the failing test
+### 3. Enumerate behaviors before writing tests
 
-Write a test that:
+Before writing any test code, enumerate **all behaviors** the requirement implies. Think like a reviewer who will read this code in 6 months — what would they want verified?
+
+Checklist to force completeness:
+
+- **All variants/modes**: If the requirement involves multiple frameworks, backends, modes, or paths — list each one. If there are two frameworks, both get tests. No exceptions.
+- **Observability**: Is there logging, warning, or metric behavior implied? If the requirement mentions log levels, warnings, or error reporting, those are testable behaviors, not implementation details.
+- **Accumulation/combination**: Does the feature iterate over items and combine results? Test the combination logic explicitly (e.g., warning concatenation, result merging, error aggregation).
+- **Error paths**: What happens when things fail? Not just "throws an error" but "throws with *this message* and *cleans up that resource*."
+- **Boundaries**: Empty inputs, single item, maximum items, null/undefined where the type allows it.
+
+Present the behavior list to the orchestrator before writing any test code. Format:
+
+```
+BEHAVIORS:
+1. [behavior name] — [why it matters]
+2. [behavior name] — [why it matters]
+...
+```
+
+**Stop here and return `NEEDS_CONTEXT` with the behavior list.** The orchestrator will confirm or add missing behaviors before you proceed. This is cheaper than catching gaps at REVIEW.
+
+Once the orchestrator confirms the behavior list, write the behavior list out as test names first (describe/it blocks with empty bodies if needed), then fill in assertions. If you realize you have more than ~5-6 test cases, that's fine — completeness beats brevity.
+
+### 4. Write the failing tests
+
+Write tests that:
 - Follows the **AAA pattern**: Arrange (setup), Act (execute), Assert (verify)
 - Describes **user behavior and outcomes**, not implementation internals
 - Does NOT anticipate the implementation — test the *what*, not the *how*
 - Is the **right type** for the requirement (see step 2)
-- Covers the **happy path** plus at least **one edge case**
+- Covers **every behavior from step 3** — not just happy path plus one edge case
 - Follows the project's existing conventions for this test type exactly (naming, structure, imports, directory)
 - Has clear, descriptive test names that read as behavior specifications
 
-### 4. Verify the test fails
+### 5. Verify the tests fail
 
 Run the test command and confirm:
 - The test **fails** (not errors due to syntax/import issues — it must be a real assertion failure or missing module)

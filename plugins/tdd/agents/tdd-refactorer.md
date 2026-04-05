@@ -35,7 +35,7 @@ Assess the code against each criterion. Only flag issues that are **genuine impr
 
 | Criterion | Question |
 |-----------|----------|
-| **Duplication** | Is there duplicated logic that should be extracted? (3+ repetitions, not 2) |
+| **Duplication** | Is there duplicated logic that should be extracted? (3+ repetitions, not 2). Also check: if you're reusing function A inside function B, does B still do something A already handles? Combining functions can *introduce* duplication. |
 | **Naming** | Are names clear and consistent with the codebase? |
 | **Responsibility** | Is logic in the right layer/module? Is anything misplaced? |
 | **Complexity** | Are there unnecessarily complex conditionals or control flow? |
