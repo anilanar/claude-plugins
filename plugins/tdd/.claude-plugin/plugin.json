@@ -1,13 +1,13 @@
 {
   "name": "tdd",
-  "description": "Enforce Test-Driven Development with isolated subagents, architect-level escalation, and persistent agent memory. Runs a strict Red-Green-Refactor cycle where each phase has its own context window, preventing implementation knowledge from leaking into test design.",
-  "version": "1.2.0",
+  "description": "Enforce Test-Driven Development with isolated subagents, domain owner review, architect-level escalation, and persistent agent memory. Runs a strict Red-Green-Refactor cycle where each phase has its own context window. Domain owners catch behavioral regressions that tests don't cover and maintain feature registries.",
+  "version": "1.3.0",
   "author": {
     "name": "Anil Anar",
     "email": "anilanar@hotmail.com"
   },
   "homepage": "https://github.com/anilanar/tdd-workflow",
   "license": "MIT",
-  "keywords": ["tdd", "testing", "quality", "subagents", "workflow", "code-review"],
+  "keywords": ["tdd", "testing", "quality", "subagents", "workflow", "code-review", "domain-owners"],
   "category": "development"
 }

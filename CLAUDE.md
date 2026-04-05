@@ -21,7 +21,7 @@ Each plugin has `.claude-plugin/plugin.json` (metadata) and optionally `hooks/` 
 ## Current Plugins
 
 - **cmux** (`plugins/cmux/`) — Skills-only plugin. Skills provide topology control, browser automation, and markdown viewing.
-- **tdd** (`plugins/tdd/`) — TDD workflow plugin with skills and agents. Runs a strict Red-Green-Refactor cycle where each phase is an isolated subagent. Agents escalate architectural decisions to the user.
+- **tdd** (`plugins/tdd/`) — TDD workflow plugin with skills and agents. Runs a strict Red-Green-Refactor cycle where each phase is an isolated subagent. Domain owners review behavioral invariants and maintain feature registries. Agents escalate architectural decisions to the user.
 
 ## No Build/Test System
 

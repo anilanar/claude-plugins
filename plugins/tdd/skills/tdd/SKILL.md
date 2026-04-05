@@ -38,6 +38,8 @@ Do NOT activate for:
 5. **Never** pass implementation plans or reasoning between agents — only pass test files and outputs
 6. **Never** let the reviewer edit files — it has Read and Bash only
 7. **Never** loop more than 3 times on review feedback without escalating to the user
+8. **Never** let an owner agent edit source code or test files — owners only modify files under `.claude/owners/`
+9. **Never** skip owner review if `.claude/owners/domains.md` exists and domains are affected
 
 ## Workflow
 
@@ -112,7 +114,21 @@ Prompt: Evaluate and optionally refactor the GREEN phase output.
 - `NEEDS_CONTEXT` → present the agent's findings to the user, wait for decision, then re-run with context
 - `BLOCKED` → present the blocker to the user, wait for resolution
 
-### Step 4: REVIEW — Adversarial verification
+### Step 4: FULL SUITE GATE
+
+Run the full test suite — not just the current increment's tests. This is an orchestrator-level step, not an agent invocation.
+
+1. Run the project's full test command via Bash
+2. If **all tests pass** → proceed to Step 5
+3. If **tests fail**:
+   - Identify whether failures are in the current increment's tests or in other tests (regressions)
+   - Pass the failure output back to the implementer as context, noting which failures are regressions
+   - Loop back to **Step 2 (GREEN)** — skip REFACTOR on fix rounds
+   - Maximum 3 regression-fix loops — after that, escalate to the user with the persistent failures
+
+This gate ensures reviewers and owners only evaluate code that passes the full suite. Deterministic checks are cheaper than LLM review.
+
+### Step 5: REVIEW — Adversarial verification
 
 Invoke the `tdd-reviewer` agent with:
 - The test file path
@@ -130,11 +146,69 @@ Prompt: Review this TDD cycle output.
 ```
 
 **Gate:** Check the agent's status:
-- `APPROVED` → cycle complete for this increment
+- `APPROVED` → proceed to Step 6
 - `CHANGES_REQUESTED` → present the reviewer's issues to the user. Ask: "Should I fix these? Any you want to skip?" On approval, re-enter GREEN phase with the reviewer's issues as context, then run REVIEW again (skip REFACTOR in fix rounds). Maximum 3 review rounds — after that, present remaining issues and ask the user how to proceed.
 - `NEEDS_CONTEXT` → present to the user, wait for decision
 
-### Step 5: Next increment or finish
+### Step 6: OWNER REVIEW (conditional)
+
+**Skip this step if `.claude/owners/domains.md` does not exist.**
+
+1. Read `.claude/owners/domains.md` for domain names, scope descriptions, and agent names
+2. Get the diff for this increment: `git diff` against the state captured before Step 1
+3. Based on the diff content and the domain scope descriptions, determine which domains are affected. You are an LLM — reason semantically about whether changes are relevant to each domain's scope. A change to a CLI command that implements baseline logic affects both "cli" and "baselines" domains.
+4. For each affected domain, spawn its owner agent in REVIEW mode:
+
+```
+Agent: owner-{domain-name}
+Prompt: Review domain invariants.
+  MODE: REVIEW
+  DOMAIN: {domain-name}
+  REQUIREMENT: <original requirement>
+  DIFF:
+  <git diff output>
+```
+
+Owners CAN be spawned in parallel — they are reading, not writing.
+
+**Gate:** Check each agent's status:
+- `SAFE` → this domain is clear
+- `NEEDS_CONTEXT` → present questions to user, wait for answers, re-run that owner with additional context
+- `REGRESSION_RISK` → present the risk analysis to the user:
+
+```
+Owner-{domain} detected regression risk:
+
+{owner's RISKS and EVIDENCE}
+
+Options:
+1. Write a test to cover this invariant (re-enter RED phase)
+2. Acknowledge the risk and proceed
+3. Revert and rethink the approach
+```
+
+Wait for the user's decision. If they choose option 1, loop back to Step 1 (RED) with the invariant as the requirement.
+
+If ALL domains return SAFE, proceed to Step 7.
+
+### Step 7: OWNER MAINTAIN (conditional)
+
+**Skip this step if `.claude/owners/domains.md` does not exist.**
+
+For each affected domain (same set as Step 6), spawn its owner agent in MAINTAIN mode:
+
+```
+Agent: owner-{domain-name}
+Prompt: Update domain records.
+  MODE: MAINTAIN
+  DOMAIN: {domain-name}
+  DIFF:
+  <git diff output>
+```
+
+This is non-blocking — owners update their feature registries and notes. If an owner returns `NO_CHANGES`, that is fine.
+
+### Step 8: Next increment or finish
 
 If there are more increments:
 - Summarize what was just completed
@@ -150,6 +224,7 @@ After all increments are complete, present:
 2. **Escalation decisions** — what was escalated and how the user resolved each one
 3. **Tech debt noted** — issues the refactorer identified but deferred
 4. **Test coverage** — list of test cases written across all increments
+5. **Owner review** — domains checked, risks identified, how they were resolved (if owners are configured)
 
 ## Handling escalations
 
