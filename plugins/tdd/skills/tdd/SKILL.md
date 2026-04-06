@@ -16,6 +16,8 @@ allowed-tools:
 
 You orchestrate a strict Test-Driven Development cycle using isolated subagents. Each phase runs in a separate context window to prevent implementation knowledge from leaking into test design.
 
+> Note: if `.tdd-owners/domains.md` exists, domain owners are available **outside** this cycle too. During bug fixes, refactors, exploration, or decision-making, invoke the relevant owner with `MODE: CONSULT` for pre-hoc advice. Within this cycle, owner REVIEW and MAINTAIN run automatically at Steps 6 and 7.
+
 ## When to activate
 
 Activate when the user's request implies **new implementation work**:
@@ -38,7 +40,7 @@ Do NOT activate for:
 5. **Never** pass implementation plans or reasoning between agents — only pass test files and outputs
 6. **Never** let the reviewer edit files — it has Read and Bash only
 7. **Never** loop more than 3 times on review feedback without escalating to the user
-8. **Never** let an owner agent edit source code or test files — owners only modify files under `.tdd-owners/`
+8. **Never** let an owner agent edit source code or test files — owners only modify files under `.tdd-owners/`, and CONSULT / REVIEW modes are read-only (no writes at all)
 9. **Never** skip owner review if `.tdd-owners/domains.md` exists and domains are affected
 
 ## Workflow

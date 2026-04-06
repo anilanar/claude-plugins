@@ -93,7 +93,41 @@ Agent: owner-{domain-name}
 Scope: {scope description}
 ```
 
-## Step 4: Confirm
+## Step 4: CLAUDE.md integration (ambient owner awareness)
+
+This step is idempotent and mirrors Step 7 of `/tdd:owner-bootstrap`. Its purpose is to make owner awareness ambient in every Claude Code session, so Claude Code consults owners proactively outside the TDD cycle. Users who ran `/tdd:owner-bootstrap` before this feature existed will get the integration the next time they add a domain.
+
+### 4a. Ensure `.tdd-owners/CLAUDE.md` exists
+
+If `.tdd-owners/CLAUDE.md` does not exist, write it with the exact static content defined in `/tdd:owner-bootstrap` Step 7a (the "Domain Owners" meta-instructions, including the "Consult an owner BEFORE", "Do NOT consult for", and "After making changes" sections). Do not customize it per-domain — it refers to `.tdd-owners/domains.md` for the current list.
+
+If the file already exists, leave it alone.
+
+### 4b. Ensure project root CLAUDE.md imports it
+
+1. Check whether `CLAUDE.md` exists at the project root.
+2. If it exists and already contains the exact line `@.tdd-owners/CLAUDE.md`, skip — nothing to do.
+3. Otherwise, ask the user before modifying:
+
+   ```
+   To make owner guidance ambient in every Claude Code session, I'd like to add this
+   import line to your project CLAUDE.md:
+
+       @.tdd-owners/CLAUDE.md
+
+   This loads the "when to consult owners" guidance automatically. You can remove it
+   any time by deleting that line.
+
+   Add it? [y/N]
+   ```
+
+4. On confirmation:
+   - If `CLAUDE.md` does not exist, create it with just `@.tdd-owners/CLAUDE.md`.
+   - If it exists, append a blank line followed by `@.tdd-owners/CLAUDE.md`.
+
+5. If the user declines, note this in the Step 5 confirmation and continue — owners are still functional, just not ambient.
+
+## Step 5: Confirm
 
 ```
 Added domain owner: {domain-name}
@@ -102,10 +136,19 @@ Files created:
 - .claude/agents/owner-{domain-name}.md
 - .tdd-owners/features/{domain-name}.md
 - .tdd-owners/notes/{domain-name}.md
+{if .tdd-owners/CLAUDE.md was newly written this run:}
+- .tdd-owners/CLAUDE.md
 
 Updated:
 - .tdd-owners/domains.md
 
+Project CLAUDE.md: {one of}
+- @.tdd-owners/CLAUDE.md import appended
+- already contained the import (no change)
+- created with @.tdd-owners/CLAUDE.md import
+- user declined import — add `@.tdd-owners/CLAUDE.md` to CLAUDE.md manually to enable ambient owner awareness
+
 The TDD workflow and /tdd:notify-owner will now include
-this domain automatically.
+this domain automatically. Outside the TDD cycle, Claude Code
+will consult owner-{domain-name} proactively via MODE: CONSULT.
 ```

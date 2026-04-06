@@ -14,6 +14,8 @@ allowed-tools:
 
 You route ad-hoc discoveries to the right domain owner. This is used outside the TDD cycle — during bug fixes, code review, exploration, or any time someone discovers something a domain owner should know about.
 
+> **NOTIFY vs CONSULT.** `/tdd:notify-owner` is **post-hoc**: you already know something the owner should record (e.g. an undocumented invariant you just discovered). If instead you want **pre-hoc advice** — "I'm about to do X in your domain, what should I watch for?" — invoke the owner subagent directly with `MODE: CONSULT`. The owner will return `ADVICE` with relevant invariants, cautions, and recommendations. CONSULT is read-only; NOTIFY writes to the owner's notes and registry.
+
 ## Prerequisites
 
 - `.tdd-owners/domains.md` must exist

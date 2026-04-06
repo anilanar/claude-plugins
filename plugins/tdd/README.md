@@ -29,12 +29,29 @@ For large features, the orchestrator decomposes the work into small increments �
 
 ## Domain owners
 
-Domain owners are per-project agents that each own a conceptual area of the codebase. They serve two purposes:
+Domain owners are per-project agents that each own a conceptual area of the codebase. They serve three purposes:
 
-1. **Review** — After a change passes the full test suite, owners check whether their domain's behavioral invariants still hold, catching regressions that existing tests don't cover.
-2. **Maintain** — After a successful change, owners update their own feature registries so domain knowledge never goes stale.
+1. **Consult** — Before making non-trivial changes, fixing bugs, or making decisions in a domain, the main Claude Code session proactively asks the relevant owner for advice. The owner returns relevant invariants, cautions, and recommendations from its feature registry and notes — like a teammate you'd ask before touching their code.
+2. **Review** — After a change passes the full test suite, owners check whether their domain's behavioral invariants still hold, catching regressions that existing tests don't cover.
+3. **Maintain** — After a successful change, owners update their own feature registries so domain knowledge never goes stale.
 
 Domains are conceptual, not directory-shaped. A "baselines" domain might span CLI code, API endpoints, git integration, and storage layers. The orchestrator reasons semantically about which domains a change affects.
+
+### Proactive consultation (outside the TDD cycle)
+
+The TDD cycle handles REVIEW and MAINTAIN automatically. CONSULT works in any session, not just TDD ones — bug fixes, refactors, exploration, code review, architecture questions.
+
+To make this ambient, `/tdd:owner-bootstrap` and `/tdd:owner-add` write a static `.tdd-owners/CLAUDE.md` with "when to consult" guidance, and (with your confirmation) append a one-line `@.tdd-owners/CLAUDE.md` import to your project root `CLAUDE.md`. Claude Code loads that import at session start, so every session knows owners exist and when to invoke them. The owner's `description` frontmatter also invites proactive consultation, which drives Claude Code's subagent routing.
+
+Owners respond in CONSULT mode with one of three statuses:
+
+- **`ADVICE`** — relevant invariants, cautions, recommendations, and file references
+- **`OUT_OF_SCOPE`** — the question isn't in this domain (the cheap-decline path, so owners don't improvise)
+- **`INSUFFICIENT_CONTEXT`** — the owner needs more information before advising
+
+CONSULT is **read-only** — owners never modify files in this mode. To record a discovery *after* the fact, use `/tdd:notify-owner` instead.
+
+To disable ambient consultation, delete the `@.tdd-owners/CLAUDE.md` line from your project `CLAUDE.md`. The owners themselves still work — they just won't be invoked automatically.
 
 ### Setting up owners
 
@@ -65,14 +82,17 @@ After bootstrap, your project will have:
 ```
 .tdd-owners/
   domains.md                        # Domain descriptions (orchestrator reads this)
+  CLAUDE.md                         # Static "when to consult owners" guidance
   features/{domain}.md              # Feature registries per domain
   notes/{domain}.md                 # Per-domain experiential notes
 .claude/
   agents/
     owner-{domain}.md               # Per-domain agent definitions
+CLAUDE.md                           # Your project CLAUDE.md, with
+                                    # `@.tdd-owners/CLAUDE.md` appended
 ```
 
-Owner data lives outside `.claude/` so owner agents can write to it without triggering Claude Code's stricter "configuration change" permission prompts. The agent definitions themselves stay under `.claude/agents/` because that's where Claude Code loads them from.
+Owner data lives outside `.claude/` so owner agents can write to it without triggering Claude Code's stricter "configuration change" permission prompts. The agent definitions themselves stay under `.claude/agents/` because that's where Claude Code loads them from. The `@.tdd-owners/CLAUDE.md` import is the only change bootstrap makes to your project root CLAUDE.md, and it always asks before modifying it.
 
 ## How escalation works
 

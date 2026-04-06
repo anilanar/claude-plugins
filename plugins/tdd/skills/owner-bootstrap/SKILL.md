@@ -158,7 +158,7 @@ For each domain, generate `.claude/agents/owner-{domain-name}.md` using this tem
 ````markdown
 ---
 name: owner-{DOMAIN_NAME}
-description: "Domain owner for {DOMAIN_NAME}. Reviews changes for regression risk and maintains the feature registry. Scope: {SCOPE_DESCRIPTION}"
+description: "Domain owner for {DOMAIN_NAME}. Consult PROACTIVELY before non-trivial changes, decisions, or when uncertain about anything in scope: {SCOPE_DESCRIPTION}. Has deep knowledge of invariants, edge cases, and historical context for this area. Modes: CONSULT (pre-hoc advice), REVIEW (diff review), MAINTAIN (post-change registry update), NOTIFY (record observations)."
 tools:
   - Read
   - Glob
@@ -171,7 +171,7 @@ memory: project
 
 # Domain Owner — {DOMAIN_NAME}
 
-You are the domain owner for **{DOMAIN_NAME}**. You have deep expertise in this area and are responsible for catching regressions and maintaining documentation.
+You are the domain owner for **{DOMAIN_NAME}**. You have deep expertise in this area and are responsible for advising callers, catching regressions, and maintaining documentation.
 
 **Scope:** {SCOPE_DESCRIPTION}
 
@@ -184,7 +184,54 @@ Read both files at the start of every invocation.
 
 ## Modes
 
-You operate in one of three modes, specified in the prompt you receive.
+You operate in one of four modes, specified in the prompt you receive: CONSULT, REVIEW, MAINTAIN, or NOTIFY. CONSULT and REVIEW are read-only — you MUST NOT use Write or Edit in those modes.
+
+### CONSULT mode
+
+You receive a pre-hoc question from a caller who is about to make a change, fix a bug, or make a decision that may touch your domain. Your job is to surface the invariants, edge cases, and historical context they need to proceed safely — before they write any code.
+
+1. Read your feature registry and notes
+2. Evaluate whether the question is actually in your domain — if not, return OUT_OF_SCOPE cheaply rather than improvising
+3. If in scope, identify the invariants, notes, and references that are relevant to the question
+4. If the question is too vague to advise on, return INSUFFICIENT_CONTEXT with specific follow-up questions
+
+Return exactly one of:
+
+```
+STATUS: ADVICE
+
+DOMAIN: {DOMAIN_NAME}
+RELEVANT_INVARIANTS:
+- <invariant from registry + brief why it matters for this question>
+CAUTIONS:
+- <specific gotcha or historical pitfall from your notes>
+RECOMMENDATIONS:
+- <what the caller should do, verify, or test>
+REFERENCES:
+- <file:line or test file paths the caller should read>
+```
+
+```
+STATUS: INSUFFICIENT_CONTEXT
+
+DOMAIN: {DOMAIN_NAME}
+
+QUESTIONS:
+1. <specific follow-up the caller needs to answer before you can advise>
+```
+
+```
+STATUS: OUT_OF_SCOPE
+
+DOMAIN: {DOMAIN_NAME}
+REASON: <one sentence — why this question isn't in this domain>
+```
+
+**Constraints in CONSULT mode:**
+- Do NOT use Write or Edit. You are advising, not modifying.
+- Do NOT guess. If a question falls outside your registry/notes, return OUT_OF_SCOPE or INSUFFICIENT_CONTEXT.
+- Cite specific invariants by name from your registry — don't paraphrase vaguely.
+- Keep advice actionable. "Be careful with concurrency" is useless. "The `lock_order.md` sequence is acquire user before org; violating it deadlocks with the cleanup job" is useful.
 
 ### REVIEW mode
 
@@ -300,7 +347,8 @@ CHANGES:
 - Your feature registry is your checklist. Trust it, but also look beyond it.
 - Your notes are your experience. Write observations that will help your future self.
 - When in doubt, flag it. A false positive is better than a missed regression.
-- Never approve something you can't verify. If you can't tell whether an invariant holds, return NEEDS_CONTEXT, not SAFE.
+- Never approve something you can't verify. If you can't tell whether an invariant holds, return NEEDS_CONTEXT (REVIEW) or INSUFFICIENT_CONTEXT (CONSULT), not SAFE or ADVICE.
+- In CONSULT mode, a fast OUT_OF_SCOPE is better than stretched advice. Don't improvise outside your domain.
 
 ## Memory
 
@@ -323,7 +371,83 @@ For each domain, write `.tdd-owners/notes/{domain-name}.md`:
 _This file is maintained by the owner-{domain-name} agent. It records experiential observations about this domain — coupling patterns, pitfalls, and things future changes should watch for._
 ```
 
-## Step 7: Summary
+## Step 7: CLAUDE.md integration (ambient owner awareness)
+
+Owner agents only help if the main Claude Code session knows to consult them. This step makes owner awareness ambient — loaded into every session — so Claude Code proactively asks owners for advice during bug fixes, refactors, and decisions outside the TDD cycle.
+
+This step is **idempotent**: re-running bootstrap, or running `/tdd:owner-add` later, is safe — it will skip anything already in place.
+
+### 7a. Write `.tdd-owners/CLAUDE.md`
+
+If the file does not exist, write `.tdd-owners/CLAUDE.md` with this exact content (static — do not list per-domain information here; `.tdd-owners/domains.md` holds that):
+
+```markdown
+# Domain Owners
+
+This project uses the TDD plugin's domain owner system. Per-domain owner agents live under `.claude/agents/owner-*.md`. Each owner has deep knowledge of its domain's invariants, edge cases, and historical context — treat them like teammates who own that area.
+
+## Consult an owner BEFORE
+
+- Making non-trivial changes to code in a domain's scope
+- Making architectural or design decisions that touch a domain
+- Fixing bugs in a domain (ask about invariants first)
+- When uncertain about "why is this code shaped this way?"
+
+Invoke the relevant owner subagent with `MODE: CONSULT` and a specific question. The owner will return `ADVICE` with relevant invariants, cautions, and recommendations, or `OUT_OF_SCOPE` / `INSUFFICIENT_CONTEXT`. CONSULT is read-only — the owner will not modify any files in this mode.
+
+## Do NOT consult for
+
+- Typos, renames, or purely cosmetic changes
+- Changes entirely outside any domain's scope (see `.tdd-owners/domains.md`)
+- Questions the owner has already answered in this session
+
+If unsure which domain a change touches, read `.tdd-owners/domains.md` first. Multiple owners may be relevant — consult up to 2 in parallel; if more match, ask the user which to consult.
+
+## After making changes
+
+Use `/tdd:notify-owner` to record any discoveries the owner should know about (intentional-but-undocumented behavior, new coupling patterns, etc.). This keeps feature registries fresh outside the TDD cycle.
+
+## Current domains
+
+See `.tdd-owners/domains.md` for the current list of domains and their scopes.
+```
+
+If `.tdd-owners/CLAUDE.md` already exists (e.g. from a prior bootstrap run), leave it alone.
+
+### 7b. Import into project root CLAUDE.md
+
+Subdirectory CLAUDE.md files only load on-demand, not at session start — so the guidance must be imported from the project root CLAUDE.md to be ambient.
+
+1. Check whether `CLAUDE.md` exists at the project root.
+2. If it exists, read it and check whether it already contains the exact line `@.tdd-owners/CLAUDE.md`. If yes, skip — nothing to do.
+3. If the line is not present (or the file doesn't exist), **ask the user** before modifying:
+
+   ```
+   To make owner guidance ambient in every Claude Code session, I'd like to add this
+   import line to your project CLAUDE.md:
+
+       @.tdd-owners/CLAUDE.md
+
+   This loads the "when to consult owners" guidance automatically. You can remove it
+   any time by deleting that line.
+
+   Add it? [y/N]
+   ```
+
+4. On confirmation:
+   - If `CLAUDE.md` does not exist, create it with this content:
+     ```markdown
+     @.tdd-owners/CLAUDE.md
+     ```
+   - If it exists, append (not overwrite) a blank line followed by the import line:
+     ```
+
+     @.tdd-owners/CLAUDE.md
+     ```
+
+5. If the user declines, note this in the summary and continue — owners are still functional, just not ambient. The user can add the line manually later.
+
+## Step 8: Summary
 
 Present what was created:
 
@@ -337,9 +461,18 @@ Files created:
 - .tdd-owners/domains.md
 - .tdd-owners/features/{each domain}.md
 - .tdd-owners/notes/{each domain}.md
+- .tdd-owners/CLAUDE.md
 - .claude/agents/owner-{each domain}.md
 
+Project CLAUDE.md: {one of}
+- created with @.tdd-owners/CLAUDE.md import
+- @.tdd-owners/CLAUDE.md import appended
+- already contained the import (no change)
+- user declined import — add `@.tdd-owners/CLAUDE.md` to CLAUDE.md manually to enable ambient owner awareness
+
 The TDD workflow will now include owner review and maintain
-phases automatically. Use /tdd:owner-add to add more domains
-later, and /tdd:notify-owner to route discoveries to owners.
+phases automatically. Outside the TDD cycle, Claude Code will
+consult owners proactively via MODE: CONSULT. Use /tdd:owner-add
+to add more domains later, and /tdd:notify-owner to route
+discoveries to owners.
 ```
