@@ -18,7 +18,7 @@ You add one new domain owner to a project that already has owner infrastructure 
 
 ## Prerequisites
 
-- `.claude/owners/domains.md` must exist (run `/tdd:owner-bootstrap` first if not)
+- `.tdd-owners/domains.md` must exist (run `/tdd:owner-bootstrap` first if not)
 - The user provides a domain name and scope description, or you help them define one
 
 ## Input
@@ -33,7 +33,7 @@ If the user only provides a name, ask them for a one-paragraph scope description
 
 ## Step 1: Check for conflicts
 
-Read `.claude/owners/domains.md` and verify:
+Read `.tdd-owners/domains.md` and verify:
 - The domain name doesn't already exist
 - The scope doesn't heavily overlap with an existing domain (if it does, ask the user if they want to expand the existing domain instead)
 
@@ -72,11 +72,11 @@ Be specific with invariants. Include cross-domain contracts.
 
 After the user confirms the feature registry:
 
-1. **Write feature registry** to `.claude/owners/features/{domain-name}.md`
+1. **Write feature registry** to `.tdd-owners/features/{domain-name}.md`
 
 2. **Generate owner agent** at `.claude/agents/owner-{domain-name}.md` using the same template as the bootstrap skill (see `/tdd:owner-bootstrap` Step 5 for the full template). Replace `{DOMAIN_NAME}` and `{SCOPE_DESCRIPTION}` with actual values.
 
-3. **Create notes file** at `.claude/owners/notes/{domain-name}.md`:
+3. **Create notes file** at `.tdd-owners/notes/{domain-name}.md`:
 
 ```markdown
 # {domain-name} — Owner Notes
@@ -84,7 +84,7 @@ After the user confirms the feature registry:
 _This file is maintained by the owner-{domain-name} agent. It records experiential observations about this domain — coupling patterns, pitfalls, and things future changes should watch for._
 ```
 
-4. **Append to `domains.md`** — add the new domain entry to `.claude/owners/domains.md`:
+4. **Append to `domains.md`** — add the new domain entry to `.tdd-owners/domains.md`:
 
 ```markdown
 
@@ -100,11 +100,11 @@ Added domain owner: {domain-name}
 
 Files created:
 - .claude/agents/owner-{domain-name}.md
-- .claude/owners/features/{domain-name}.md
-- .claude/owners/notes/{domain-name}.md
+- .tdd-owners/features/{domain-name}.md
+- .tdd-owners/notes/{domain-name}.md
 
 Updated:
-- .claude/owners/domains.md
+- .tdd-owners/domains.md
 
 The TDD workflow and /tdd:notify-owner will now include
 this domain automatically.

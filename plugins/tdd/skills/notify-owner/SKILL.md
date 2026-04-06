@@ -16,7 +16,7 @@ You route ad-hoc discoveries to the right domain owner. This is used outside the
 
 ## Prerequisites
 
-- `.claude/owners/domains.md` must exist
+- `.tdd-owners/domains.md` must exist
 
 ## Input
 
@@ -32,10 +32,10 @@ The user invokes this with an observation and optionally a domain name:
 
 ## Step 1: Determine target domain(s)
 
-If the user specified a domain name, verify it exists in `.claude/owners/domains.md`.
+If the user specified a domain name, verify it exists in `.tdd-owners/domains.md`.
 
 If not specified:
-1. Read `.claude/owners/domains.md`
+1. Read `.tdd-owners/domains.md`
 2. Based on the observation content and the domain scope descriptions, determine which domain(s) are affected
 3. If ambiguous, present the domain list and ask the user which one(s) to notify
 

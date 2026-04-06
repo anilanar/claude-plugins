@@ -63,14 +63,16 @@ During bug fixes, code review, or exploration, you may discover something a doma
 After bootstrap, your project will have:
 
 ```
+.tdd-owners/
+  domains.md                        # Domain descriptions (orchestrator reads this)
+  features/{domain}.md              # Feature registries per domain
+  notes/{domain}.md                 # Per-domain experiential notes
 .claude/
-  owners/
-    domains.md                      # Domain descriptions (orchestrator reads this)
-    features/{domain}.md            # Feature registries per domain
-    notes/{domain}.md               # Per-domain experiential notes
   agents/
     owner-{domain}.md               # Per-domain agent definitions
 ```
+
+Owner data lives outside `.claude/` so owner agents can write to it without triggering Claude Code's stricter "configuration change" permission prompts. The agent definitions themselves stay under `.claude/agents/` because that's where Claude Code loads them from.
 
 ## How escalation works
 

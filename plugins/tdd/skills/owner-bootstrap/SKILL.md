@@ -19,7 +19,7 @@ You set up domain owner infrastructure for the current project. Domain owners ar
 ## Prerequisites
 
 - The project must be a git repository with meaningful commit history
-- If `.claude/owners/domains.md` already exists, confirm with the user before overwriting
+- If `.tdd-owners/domains.md` already exists, confirm with the user before overwriting
 
 ## Step 1: Discover domains from git history
 
@@ -84,16 +84,16 @@ Do NOT proceed until the user confirms the domain list.
 Once domains are confirmed, create:
 
 ```
-.claude/owners/
-.claude/owners/features/
-.claude/owners/notes/
+.tdd-owners/
+.tdd-owners/features/
+.tdd-owners/notes/
 ```
 
 Use `mkdir -p` via Bash. If `.claude/agents/` doesn't exist, create it too.
 
 ## Step 3: Write `domains.md`
 
-Write `.claude/owners/domains.md` with the confirmed domains. Format:
+Write `.tdd-owners/domains.md` with the confirmed domains. Format:
 
 ```markdown
 # Domains
@@ -149,7 +149,7 @@ Rules:
 
 **After each Explore agent returns, present the feature registry to the user for review.** The user's architectural knowledge is critical here — they know invariants that aren't encoded in code or tests. Let them add, remove, or refine entries.
 
-Write the confirmed registry to `.claude/owners/features/{domain-name}.md`.
+Write the confirmed registry to `.tdd-owners/features/{domain-name}.md`.
 
 ## Step 5: Generate owner agent files
 
@@ -177,8 +177,8 @@ You are the domain owner for **{DOMAIN_NAME}**. You have deep expertise in this 
 
 ## Your files
 
-- **Feature registry**: `.claude/owners/features/{DOMAIN_NAME}.md` — your checklist of behavioral invariants
-- **Notes**: `.claude/owners/notes/{DOMAIN_NAME}.md` — your experiential observations
+- **Feature registry**: `.tdd-owners/features/{DOMAIN_NAME}.md` — your checklist of behavioral invariants
+- **Notes**: `.tdd-owners/notes/{DOMAIN_NAME}.md` — your experiential observations
 
 Read both files at the start of every invocation.
 
@@ -265,7 +265,7 @@ NOTES_ADDED:
 ```
 
 **Constraints in MAINTAIN mode:**
-- Only modify files under `.claude/owners/`. Never touch source code or tests.
+- Only modify files under `.tdd-owners/`. Never touch source code or tests.
 - Keep registry updates conservative — only add what the code clearly demonstrates.
 - Preserve existing invariants unless the change explicitly invalidates them.
 
@@ -292,7 +292,7 @@ CHANGES:
 ```
 
 **Constraints in NOTIFY mode:**
-- Only modify files under `.claude/owners/`. Never touch source code or tests.
+- Only modify files under `.tdd-owners/`. Never touch source code or tests.
 - Be honest about relevance — don't force-fit observations into your domain.
 
 ## Principles
@@ -315,7 +315,7 @@ Replace `{DOMAIN_NAME}` and `{SCOPE_DESCRIPTION}` with the actual domain name an
 
 ## Step 6: Create empty notes files
 
-For each domain, write `.claude/owners/notes/{domain-name}.md`:
+For each domain, write `.tdd-owners/notes/{domain-name}.md`:
 
 ```markdown
 # {domain-name} — Owner Notes
@@ -334,9 +334,9 @@ Domains: {count}
 {list each domain with scope}
 
 Files created:
-- .claude/owners/domains.md
-- .claude/owners/features/{each domain}.md
-- .claude/owners/notes/{each domain}.md
+- .tdd-owners/domains.md
+- .tdd-owners/features/{each domain}.md
+- .tdd-owners/notes/{each domain}.md
 - .claude/agents/owner-{each domain}.md
 
 The TDD workflow will now include owner review and maintain

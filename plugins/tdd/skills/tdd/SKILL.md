@@ -38,8 +38,8 @@ Do NOT activate for:
 5. **Never** pass implementation plans or reasoning between agents — only pass test files and outputs
 6. **Never** let the reviewer edit files — it has Read and Bash only
 7. **Never** loop more than 3 times on review feedback without escalating to the user
-8. **Never** let an owner agent edit source code or test files — owners only modify files under `.claude/owners/`
-9. **Never** skip owner review if `.claude/owners/domains.md` exists and domains are affected
+8. **Never** let an owner agent edit source code or test files — owners only modify files under `.tdd-owners/`
+9. **Never** skip owner review if `.tdd-owners/domains.md` exists and domains are affected
 
 ## Workflow
 
@@ -152,9 +152,9 @@ Prompt: Review this TDD cycle output.
 
 ### Step 6: OWNER REVIEW (conditional)
 
-**Skip this step if `.claude/owners/domains.md` does not exist.**
+**Skip this step if `.tdd-owners/domains.md` does not exist.**
 
-1. Read `.claude/owners/domains.md` for domain names, scope descriptions, and agent names
+1. Read `.tdd-owners/domains.md` for domain names, scope descriptions, and agent names
 2. Get the diff for this increment: `git diff` against the state captured before Step 1
 3. Based on the diff content and the domain scope descriptions, determine which domains are affected. You are an LLM — reason semantically about whether changes are relevant to each domain's scope. A change to a CLI command that implements baseline logic affects both "cli" and "baselines" domains.
 4. For each affected domain, spawn its owner agent in REVIEW mode:
@@ -193,7 +193,7 @@ If ALL domains return SAFE, proceed to Step 7.
 
 ### Step 7: OWNER MAINTAIN (conditional)
 
-**Skip this step if `.claude/owners/domains.md` does not exist.**
+**Skip this step if `.tdd-owners/domains.md` does not exist.**
 
 For each affected domain (same set as Step 6), spawn its owner agent in MAINTAIN mode:
 
